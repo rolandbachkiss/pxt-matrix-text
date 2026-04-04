@@ -1,0 +1,19 @@
+{
+    "name": "matrix-text",
+    "version": "0.1.0",
+    "description": "Font-agnostic text renderer and scrolling text for NeoPixel matrix panels",
+    "license": "MIT",
+    "authors": ["Roland Bach Kiss <rolandbachkiss@gmail.com>"],
+    "dependencies": {
+        "core": "*",
+        "neopixel": "github:microsoft/pxt-neopixel#v0.7.6",
+        "matrix-core": "github:rolandbachkiss/pxt-matrix-core"
+    },
+    "files": [
+        "README.md",
+        "matrix-text.ts"
+    ],
+    "testFiles": ["test.ts"],
+    "supportedTargets": ["microbit"],
+    "preferredEditor": "tsprj"
+}
