@@ -140,11 +140,11 @@ namespace matrixText {
         let total = 0
         for (let i = 0; i < text.length; i++) {
             if (findGlyph(text.charAt(i))) {
-                if (total > 0) total += 1   // inter-character gap
+                if (total > 0) total += 1
                 total += _foundFont.glyphW
             } else {
                 if (total > 0) total += 1
-                total += 4  // space advance for unknown chars
+                total += 4
             }
         }
         return total
@@ -168,11 +168,11 @@ namespace matrixText {
     }
 
     // -------------------------------------------------------------------------
-    // Drawing
+    // Drawing — writes directly via matrixCore.setPixelXY
     // -------------------------------------------------------------------------
 
     /**
-     * Draw a single character onto the back buffer.
+     * Draw a single character onto the matrix.
      * @param ch character to draw
      * @param x left edge in pixels
      * @param y top edge in pixels
@@ -185,22 +185,21 @@ namespace matrixText {
     export function drawChar(ch: string, x: number, y: number, c: number): void {
         if (!findGlyph(ch)) return
         const r = (c >> 16) & 0xFF
-        const g = (c >> 8) & 0xFF
-        const b = c & 0xFF
+        const g = (c >> 8)  & 0xFF
+        const b =  c        & 0xFF
         const font = _foundFont
-        const idx = _foundIdx
-        const buf = matrixCore.getBackBuffer()
+        const idx  = _foundIdx
         for (let col = 0; col < font.glyphW; col++) {
             for (let row = 0; row < font.glyphH; row++) {
                 if (font.getPixel(idx, col, row)) {
-                    matrixCore.setPixelBuf(buf, x + col, y + row, r, g, b)
+                    matrixCore.setPixelXY(x + col, y + row, r, g, b)
                 }
             }
         }
     }
 
     /**
-     * Draw a text string onto the back buffer.
+     * Draw a text string onto the matrix.
      * @param text string to draw
      * @param x left edge in pixels
      * @param y top edge in pixels
@@ -218,7 +217,7 @@ namespace matrixText {
                 drawChar(ch, cx, y, c)
                 cx += _foundFont.glyphW + 1
             } else {
-                cx += 4  // space advance for unknown chars
+                cx += 4
             }
         }
     }
@@ -241,18 +240,18 @@ namespace matrixText {
     //% speed.defl=1 speed.min=1 speed.max=8
     //% group="Scrolling" weight=100
     export function startScroll(text: string, y: number, c: number, speed: number): void {
-        _scrollText = text
-        _scrollX = matrixCore.width()
-        _scrollY = y
-        _scrollR = (c >> 16) & 0xFF
-        _scrollG = (c >> 8) & 0xFF
-        _scrollB = c & 0xFF
+        _scrollText  = text
+        _scrollX     = matrixCore.width()
+        _scrollY     = y
+        _scrollR     = (c >> 16) & 0xFF
+        _scrollG     = (c >> 8)  & 0xFF
+        _scrollB     =  c        & 0xFF
         _scrollSpeed = speed
     }
 
     /**
-     * Advance the scroll by one step and paint the current frame onto the
-     * back buffer. Call once per display refresh in your game loop.
+     * Advance the scroll by one step and paint the current frame onto the matrix.
+     * Call once per display refresh in your game loop.
      * Returns true while text is actively scrolling, false if no text is set.
      */
     //% blockId=matrix_text_update_scroll
@@ -261,36 +260,33 @@ namespace matrixText {
     export function updateScroll(): boolean {
         if (_scrollText.length === 0) return false
 
-        const buf = matrixCore.getBackBuffer()
         const matW = matrixCore.width()
-
-        // Draw each glyph at the current scroll offset
         let cx = _scrollX
+
         for (let i = 0; i < _scrollText.length; i++) {
             const ch = _scrollText.charAt(i)
             if (findGlyph(ch)) {
                 const font = _foundFont
-                const idx = _foundIdx
+                const idx  = _foundIdx
                 for (let col = 0; col < font.glyphW; col++) {
                     const px = cx + col
                     if (px >= 0 && px < matW) {
                         for (let row = 0; row < font.glyphH; row++) {
                             if (font.getPixel(idx, col, row)) {
-                                matrixCore.setPixelBuf(buf, px, _scrollY + row, _scrollR, _scrollG, _scrollB)
+                                matrixCore.setPixelXY(px, _scrollY + row, _scrollR, _scrollG, _scrollB)
                             }
                         }
                     }
                 }
                 cx += font.glyphW + 1
             } else {
-                cx += 4  // space advance for unknown chars
+                cx += 4
             }
         }
 
-        // Advance scroll position
         _scrollX -= _scrollSpeed
 
-        // Reset when the text has fully scrolled off the left edge
+        // Reset when text has fully scrolled off the left edge
         if (_scrollX < -textWidth(_scrollText)) {
             _scrollX = matW
         }
@@ -299,7 +295,7 @@ namespace matrixText {
     }
 
     /**
-     * Stop the scrolling text animation and clear the scroll state.
+     * Stop the scrolling text animation and clear scroll state.
      */
     //% blockId=matrix_text_stop_scroll
     //% block="stop scrolling"
