@@ -1,6 +1,6 @@
 {
     "name": "matrix-text",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Font-agnostic text renderer and scrolling text for NeoPixel matrix panels",
     "license": "MIT",
     "dependencies": {
