@@ -2,6 +2,10 @@
  * matrix-text — font-agnostic text renderer and scrolling text
  * for NeoPixel matrix panels driven by matrixCore.
  *
+ * Depends on pxt-matrix-core for pixel output.
+ * Requires at least one font extension (pxt-matrix-font-capital,
+ * pxt-matrix-font-lowercase, or pxt-matrix-font-digits) to render glyphs.
+ *
  * Glyph data layout: column-major, one byte per column for fonts up to 8 px
  * tall, two bytes per column (little-endian) for fonts 9–16 px tall.
  * LSB of each column byte = top row of the glyph.
